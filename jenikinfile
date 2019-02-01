@@ -1,0 +1,43 @@
+
+def appName = "${params.PROJECT_NAME}"
+def imageBuildConfig = appName
+def deploymentConfig = appName
+
+pipeline {
+  agent {
+    label 'maven'
+  }
+  stages {
+    stage('Run unit tests') {
+      steps {
+        echo "Run unit tests"
+        sh 'mvn test'
+      }
+      
+    }
+
+    stage('Build') {
+      steps {
+        echo "Building"
+        sh 'mvn package'
+        echo "Trigger image build"
+        script {
+          openshift.withCluster() {
+            openshift.selector("bc", imageBuildConfig).startBuild("--from-file=target/ROOT.war", "--wait")
+            }
+          }
+        }
+      
+    }
+
+    stage('Deploy') {
+      steps {
+        script {
+          openshift.withCluster() {
+            openshift.selector("dc", deploymentConfig).rollout()
+          }
+        }
+      }
+    }
+  }
+}
