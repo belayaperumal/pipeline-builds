@@ -1,8 +1,9 @@
 
 def templatePath = 'https://github.com/belayaperumal/pipeline-builds/blob/master/openshift-pipeline.yaml'  
+def APP_NAME= 'openshift-pipeline-demo1'
 try {
    timeout(time: 20, unit: 'MINUTES') {
-      def appName="openshift-pipeline-demo1"
+      def appName="${APP_NAME}"
       def project=""
       node {
         stage("Initialize") {
