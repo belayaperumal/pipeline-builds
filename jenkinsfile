@@ -10,7 +10,10 @@ try {
           project = env.PROJECT_NAME
         }
       }
-      node("maven") {
+      node {
+         label {
+         maven
+         }
         stage("Checkout") {
           git url: "https://github.com/efsavage/hello-world-war.git", branch: "master"
         }
